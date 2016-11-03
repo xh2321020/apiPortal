@@ -1,20 +1,6 @@
 package com.cnnp.social.collspace.manager;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.dozer.DozerBeanMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.cnnp.social.collspace.manager.dto.CollspaceDto;
-import com.cnnp.social.collspace.manager.dto.CollspaceRemarkDto;
-import com.cnnp.social.collspace.manager.dto.CollspaceTopicDto;
-import com.cnnp.social.collspace.manager.dto.CollspaceTopic_RDto;
-import com.cnnp.social.collspace.manager.dto.CollspaceUserDto;
+import com.cnnp.social.collspace.manager.dto.*;
 import com.cnnp.social.collspace.repository.dao.CollspaceDao;
 import com.cnnp.social.collspace.repository.dao.CollspaceRamarkDao;
 import com.cnnp.social.collspace.repository.dao.CollspaceTopicDao;
@@ -23,7 +9,15 @@ import com.cnnp.social.collspace.repository.entity.TCollspace;
 import com.cnnp.social.collspace.repository.entity.TCollspaceRemark;
 import com.cnnp.social.collspace.repository.entity.TCollspaceTopic;
 import com.cnnp.social.collspace.repository.entity.TCollspaceUser;
-import com.cnnp.social.schedule.repository.entity.TSchedule;
+import org.dozer.DozerBeanMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 @EnableTransactionManagement

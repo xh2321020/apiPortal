@@ -1,13 +1,12 @@
 package com.cnnp.social.homepage.repository.dao;
 
-import java.util.List;
-
+import com.cnnp.social.homepage.repository.entity.THomePageArticlecat;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cnnp.social.homepage.repository.entity.THomePageArticlecat;
+import java.util.List;
 
 @Transactional
 public interface HomePageArticlecatDao extends CrudRepository<THomePageArticlecat, Long> ,JpaSpecificationExecutor<THomePageArticlecat>{
