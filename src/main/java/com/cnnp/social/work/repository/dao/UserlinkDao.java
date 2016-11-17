@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cnnp.social.homepage.repository.entity.THomePageAdmin;
 import com.cnnp.social.work.repository.entity.TUserLink;
 
 

@@ -1,47 +1,39 @@
 package com.cnnp.social;
 
+import com.cnnp.social.base.BaseSetting;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
+import org.springframework.boot.context.embedded.ErrorPage;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-
-import com.cnnp.social.base.BaseSetting;
-import com.cnnp.social.news.manager.NewsSetting;
+import org.springframework.http.HttpStatus;
 
 @Configuration
 @ComponentScan
 @EnableAutoConfiguration
 @EnableCaching
-@EnableConfigurationProperties({NewsSetting.class,BaseSetting.class})
+@EnableConfigurationProperties({BaseSetting.class})
 public class Application {
-//extends SpringBootServletInitializer
     public static void main(String[] args) {
-      //System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-     SpringApplication.run(Application.class, args);
-    	//System.out.println(new Date());
+        SpringApplication.run(Application.class, args);
     }
-//    @Override
-//    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-//        return application.sources(Application.class);
-//    }
-//	@Bean
-//	public UndertowEmbeddedServletContainerFactory embeddedServletContainerFactory() {
-//	    UndertowEmbeddedServletContainerFactory factory = new UndertowEmbeddedServletContainerFactory();
-//	   // factory.
-//	    //factory
-//	    factory.addBuilderCustomizers(new UndertowBuilderCustomizer() {
-//
-//			@Override
-//			public void customize(Undertow.Builder builder) {
-//
-//				builder.addHttpListener(8080, "0.0.0.0");
-//
-//			}
-//
-//
-//	    });
-//	    return factory;
-//	}
+
+
+    public EmbeddedServletContainerCustomizer containerCustomizer() {
+        return new EmbeddedServletContainerCustomizer() {
+            @Override
+            public void customize(ConfigurableEmbeddedServletContainer container) {
+                ErrorPage error403Page = new ErrorPage(HttpStatus.FORBIDDEN, "/403.html");
+                ErrorPage error404Page = new ErrorPage(HttpStatus.UNAUTHORIZED, "/401.jsp");
+                ErrorPage error500Page = new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "/500.html");
+                container.addErrorPages(error403Page, error404Page, error500Page);
+            }
+
+
+        };
+    }
 }

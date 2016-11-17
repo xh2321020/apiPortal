@@ -1,5 +1,4 @@
-package com.cnnp.social.news.service; 
-import com.cnnp.social.news.manager.dto.NewsDto;
+package com.cnnp.social.news.service;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,10 +8,7 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 /**==========================
 * NewsController Tester. 
@@ -29,7 +25,7 @@ public class NewsControllerTest {
     private RestTemplate restTemplate = new TestRestTemplate();
 @Before 
 public void setUp() throws Exception {
-    mockMvc= MockMvcBuilders.standaloneSetup(new NewsController()).build();
+
 } 
 
 /** 
@@ -39,6 +35,7 @@ public void setUp() throws Exception {
 */ 
 @Test
 public void testFindMany() throws Exception {
+
   //  List<NewsDto> list= restTemplate.getForObject("http://localhost:8080/social/news/7?size=10", List.class);
 
    // RequestBuilder request = get("http://localhost:8080/news/7?size=10");

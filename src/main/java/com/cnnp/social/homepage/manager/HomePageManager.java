@@ -1,8 +1,10 @@
 package com.cnnp.social.homepage.manager;
 
+import com.cnnp.social.homepage.exception.NoAuthenticationException;
 import com.cnnp.social.homepage.manager.dto.*;
 import com.cnnp.social.homepage.repository.dao.*;
 import com.cnnp.social.homepage.repository.entity.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,10 +24,6 @@ public class HomePageManager {
 	@Autowired
 	private HomePageInfoDao homepageInfoDao;
 	@Autowired
-	private HomePageAdminDao homepageAdminDao;
-	@Autowired
-	private HomePageColumnDao homepageColumnDao;
-	@Autowired
 	private HomePageArticlecatDao homepageArticlecatDao;
 	@Autowired
 	private HomePageFormDao homepageFormDao;
@@ -33,8 +31,6 @@ public class HomePageManager {
 	private HomePageFormInDao homepageForminDao;
 	@Autowired
 	private HomePageStyleDao homepageStyleDao;
-	@Autowired
-	private HomePageImgDao homepageimgDao;
 	@Autowired
 	private HomePageStyleOrderDao homepagestyleorderDao;
 
@@ -51,47 +47,18 @@ public class HomePageManager {
 		}else{
 			hpid = homepageArticlecatDao.findmaxid()+1;
 		}
-		long id;
-		if (homepageAdminDao.findid()==0){
-			id=1;
-		}else{
-			id = homepageAdminDao.findmaxid()+1;
-		}
 		//long hpid = homepageInfoDao.findmaxid()+1;
 		//long id = homepageAdminDao.findmaxid()+1;
 		Date now = new Date();
 		homepage.setid(hpid);
 		homepage.setUpdatetime(now);
 		// set the default value of priority as 0
-		if("".equals(homepage.getPriority())){
+		if("".equals(""+homepage.getPriority())){
 			homepage.setPriority(0);
 		}
 		THomePageInfo hpEntry = new THomePageInfo();
 		mapper.map(homepage, hpEntry);
-		List<THomePageAdmin> homepageadminEntries = new ArrayList<THomePageAdmin>();
-		Boolean peopleflg = true;
-		for(THomePageAdmin admin : hpEntry.getAdmin()){
-			admin.setid(id);
-			admin.setHpid(hpid);
-			admin.setColumnid(0);
-			admin.setUpdatetime(now);
-			homepageadminEntries.add(admin);
-			id = id+1;
-			if (homepage.getCreateuserid().equals(admin.getUserid())){
-				peopleflg = false;
-			}
-		}
-		if (peopleflg){
-			THomePageAdmin user = new THomePageAdmin();
-			user.setid(id);
-			user.setHpid(hpid);
-			user.setColumnid(0);
-			user.setUserid(homepage.getCreateuserid());
-			user.setUsername(homepage.getCreateusername());
-			user.setUpdatetime(now);
-			homepageadminEntries.add(user);
-		}
-		hpEntry.setAdmin(homepageadminEntries);
+
 		THomePageArticlecat articlecatEntry = new THomePageArticlecat();
 		articlecatEntry.setid(hpid);
 		articlecatEntry.setIs_build("1");
@@ -111,45 +78,11 @@ public class HomePageManager {
 		if (homepage == null) {
 			return;
 		}
-		long id;
-		if (homepageAdminDao.findid()==0){
-			id=1;
-		}else{
-			id = homepageAdminDao.findmaxid()+1;
-		}
+
 		Date now = new Date();
 		homepage.setUpdatetime(now);
 		THomePageInfo hpEntry = new THomePageInfo();
 		mapper.map(homepage, hpEntry);
-		List<THomePageAdmin> adminEntries =  homepageAdminDao.findHPadmin(homepage.getid());
-		if(adminEntries !=null){
-			homepageAdminDao.delete(adminEntries);
-		}
-
-		List<THomePageAdmin> homepageadminEntries = new ArrayList<THomePageAdmin>();
-		Boolean peopleflg = true;
-		for(THomePageAdmin admin : hpEntry.getAdmin()){
-			admin.setUpdatetime(now);
-			admin.setid(id);
-			admin.setColumnid(0);
-			homepageadminEntries.add(admin);
-			id = id+1;
-			if (homepage.getCreateuserid().equals(admin.getUserid())){
-				peopleflg = false;
-			}
-		}
-
-		if (peopleflg){
-			THomePageAdmin user = new THomePageAdmin();
-			user.setid(id);
-			user.setHpid(homepage.getid());
-			user.setColumnid(0);
-			user.setUserid(homepage.getCreateuserid());
-			user.setUsername(homepage.getCreateusername());
-			user.setUpdatetime(now);
-			homepageadminEntries.add(user);
-		}
-		hpEntry.setAdmin(homepageadminEntries);
 		homepageInfoDao.save(hpEntry);
 		return;
 	}
@@ -180,154 +113,27 @@ public class HomePageManager {
 	}
 
 
-	public List<HomePageInfoDto> findHomePage(String userid){
-		List<THomePageAdmin> homepageadminEntries =  homepageAdminDao.findHP(userid);
-		if(homepageadminEntries==null){
-			return new ArrayList<HomePageInfoDto>();
+	/**
+	 * 查询所有启用的门户
+	 * @return
+	 */
+	public List<HomePageInfoDto> findActivePortals(){
+		List<THomePageInfo> activePortals=homepageInfoDao.loadAllActivePortal();
+		if(CollectionUtils.isEmpty(activePortals)){
+			return null;
 		}
-		List<HomePageInfoDto> homepageDtos=new ArrayList<HomePageInfoDto>();
 
-		for(THomePageAdmin user : homepageadminEntries){
-			HomePageAdminDto dto=new HomePageAdminDto();
-			mapper.map(user, dto);
-			THomePageInfo homepageEntries = homepageInfoDao.findOne(dto.getHpid());
-			HomePageInfoDto hp=new HomePageInfoDto();
-			mapper.map(homepageEntries, hp);
-			List<THomePageAdmin> adminEntries =  homepageAdminDao.findHPadmin(hp.getid());
-			hp.setAdmin(adminEntries);
-			homepageDtos.add(hp);
+		List<HomePageInfoDto> portals=new ArrayList<HomePageInfoDto>();
+		for(THomePageInfo activePortal : activePortals){
+			HomePageInfoDto portal = new HomePageInfoDto();
+			mapper.map(activePortal, portal);
+			portals.add(portal);
+
 		}
-		return homepageDtos;
+		return portals;
 	}
 
-	public List<HomePageColumnDto> findColumn(long hpid){
-		List<THomePageColumn> homepagecolumnEntries =  homepageColumnDao.find(hpid);
-		if(homepagecolumnEntries==null){
-			return new ArrayList<HomePageColumnDto>();
-		}
-		List<HomePageColumnDto> homepagecolumnDtos=new ArrayList<HomePageColumnDto>();
 
-		for(THomePageColumn column : homepagecolumnEntries){
-			HomePageColumnDto dto=new HomePageColumnDto();
-			mapper.map(column, dto);
-			List<THomePageAdmin> adminEntries =  homepageAdminDao.findcolumnadmin(dto.getid());
-			dto.setAdmin(adminEntries);
-			homepagecolumnDtos.add(dto);
-		}
-		return homepagecolumnDtos;
-	}
-
-	public void saveColumn(HomePageColumnDto column) {
-		if (column == null) {
-			return;
-		}
-		long adminid;
-		if (homepageAdminDao.findid()==0){
-			adminid=1;
-		}else{
-			adminid = homepageAdminDao.findmaxid()+1;
-		}
-		long columnid;
-		if (homepageColumnDao.findid()==0){
-			columnid=1;
-		}else{
-			columnid = homepageColumnDao.findmaxid()+1;
-		}
-		//long adminid = homepageAdminDao.findmaxid()+1;
-		//long columnid = homepageColumnDao.findmaxid()+1;
-		Date now = new Date();
-		column.setid(columnid);
-		column.setUpdatetime(now);
-		THomePageColumn columnEntry = new THomePageColumn();
-		mapper.map(column, columnEntry);
-		List<THomePageAdmin> homepageadminEntries = new ArrayList<THomePageAdmin>();
-		Boolean peopleflg = true;
-		for(THomePageAdmin admin : columnEntry.getAdmin()){
-			admin.setid(adminid);
-			admin.setColumnid(columnid);
-			admin.setUpdatetime(now);
-			homepageadminEntries.add(admin);
-			adminid = adminid+1;
-			if (column.getCreateuserid().equals(admin.getUserid())){
-				peopleflg = false;
-			}
-		}
-		if (peopleflg){
-			THomePageAdmin user = new THomePageAdmin();
-			user.setid(adminid);
-			user.setHpid(column.getHpid());
-			user.setColumnid(columnid);
-			user.setUserid(column.getCreateuserid());
-			user.setUsername(column.getCreateusername());
-			user.setUpdatetime(now);
-			homepageadminEntries.add(user);
-		}
-		columnEntry.setAdmin(homepageadminEntries);
-		homepageColumnDao.save(columnEntry);
-		return;
-	}
-	public void editColumn(HomePageColumnDto column) {
-		if (column == null) {
-			return;
-		}
-		long adminid = homepageAdminDao.findmaxid()+1;
-		Date now = new Date();
-		column.setUpdatetime(now);
-		THomePageColumn columnEntry = new THomePageColumn();
-		mapper.map(column, columnEntry);
-		List<THomePageAdmin> adminEntries =  homepageAdminDao.findcolumnadmin(column.getid());
-		if(adminEntries !=null){
-			homepageAdminDao.delete(adminEntries);
-		}
-
-		List<THomePageAdmin> homepageadminEntries = new ArrayList<THomePageAdmin>();
-		Boolean peopleflg = true;
-		for(THomePageAdmin admin : columnEntry.getAdmin()){
-			admin.setid(adminid);
-			admin.setUpdatetime(now);
-			homepageadminEntries.add(admin);
-			adminid = adminid+1;
-			if (column.getCreateuserid().equals(admin.getUserid())){
-				peopleflg = false;
-			}
-		}
-		if (peopleflg){
-			THomePageAdmin user = new THomePageAdmin();
-			user.setid(adminid);
-			user.setHpid(column.getHpid());
-			user.setColumnid(column.getid());
-			user.setUserid(column.getCreateuserid());
-			user.setUsername(column.getCreateusername());
-			user.setUpdatetime(now);
-			homepageadminEntries.add(user);
-		}
-		columnEntry.setAdmin(homepageadminEntries);
-		homepageColumnDao.save(columnEntry);
-
-		return;
-	}
-
-	public void editColumn(long columnid,String type) {
-		THomePageColumn columnEntry =  homepageColumnDao.findone(columnid);
-		if(columnEntry==null){
-			return;
-		}
-
-		if(type.equals("del")){
-			homepageColumnDao.delete(columnEntry);
-			return;
-		}
-		if(type.equals("start")){
-			columnEntry.setStatus("1");
-		}
-		if(type.equals("stop")){
-			columnEntry.setStatus("0");
-		}
-		Date now = new Date();
-		columnEntry.setUpdatetime(now);
-		homepageColumnDao.save(columnEntry);
-		return;
-	}
 
 
 	public List<HomePageFormDto> findForm(long hpid){
@@ -450,9 +256,7 @@ public class HomePageManager {
 
 		for(THomePageStyle Style : homepagestyleEntries){
 			List<THomePageStyleOrder> homepagestyleorderEntries =  homepagestyleorderDao.find(Style.getid());
-			List<THomePageImg> homepageimgEntries =  homepageimgDao.find(Style.getid());
 			Style.setOrder(homepagestyleorderEntries);
-			Style.setImg(homepageimgEntries);
 			HomePageStyleDto dto=new HomePageStyleDto();
 			mapper.map(Style, dto);
 			homepagestyleDtos.add(dto);
@@ -470,41 +274,26 @@ public class HomePageManager {
 		}else{
 			styleid = homepageStyleDao.findmaxid()+1;
 		}
-		long imgid;
-		if (homepageimgDao.findid()==0){
-			imgid=1;
-		}else{
-			imgid = homepageimgDao.findmaxid()+1;
-		}
+
 		long orderid;
 		if (homepagestyleorderDao.findid()==0){
 			orderid=1;
 		}else{
 			orderid = homepagestyleorderDao.findmaxid()+1;
 		}
-		//long styleid = homepageStyleDao.findmaxid()+1;
-		//long imgid = homepageimgDao.findmaxid()+1;
-		//long orderid = homepagestyleorderDao.findmaxid()+1;
 		Date now = new Date();
 		style.setid(styleid);
 		style.setUpdatetime(now);
 		THomePageStyle styleEntry = new THomePageStyle();
 		mapper.map(style, styleEntry);
 		List<THomePageStyleOrder> homepagestyleorderEntries = new ArrayList<THomePageStyleOrder>();
-		List<THomePageImg> homepageimgEntries = new ArrayList<THomePageImg>();
 		for(THomePageStyleOrder order : styleEntry.getOrder()){
 			order.setid(orderid);
 			order.setStyleid(styleid);
 			homepagestyleorderEntries.add(order);
 			orderid = orderid+1;
 		}
-		for(THomePageImg img : styleEntry.getImg()){
-			img.setid(imgid);
-			img.setStyleid(styleid);
-			img.setUpdatetime(now);
-			homepageimgEntries.add(img);
-			imgid = imgid+1;
-		}
+
 		homepageStyleDao.save(styleEntry);
 		return;
 	}
@@ -512,12 +301,7 @@ public class HomePageManager {
 		if (style == null) {
 			return;
 		}
-		long imgid;
-		if (homepageimgDao.findid()==0){
-			imgid=1;
-		}else{
-			imgid = homepageimgDao.findmaxid()+1;
-		}
+
 		long orderid;
 		if (homepagestyleorderDao.findid()==0){
 			orderid=1;
@@ -530,31 +314,18 @@ public class HomePageManager {
 		style.setUpdatetime(now);
 		THomePageStyle styleEntry = new THomePageStyle();
 		mapper.map(style, styleEntry);
-		List<THomePageImg> imgEntries =  homepageimgDao.find(style.getid());
-		if (imgEntries!=null){
-			homepageimgDao.delete(imgEntries);
-		}
 
 		List<THomePageStyleOrder> orderEntries = homepagestyleorderDao.find(style.getid());
 		if (orderEntries!=null){
 			homepagestyleorderDao.delete(orderEntries);
 		}
 		List<THomePageStyleOrder> homepagestyleorderEntries = new ArrayList<THomePageStyleOrder>();
-		List<THomePageImg> homepageimgEntries = new ArrayList<THomePageImg>();
 		for(THomePageStyleOrder order : styleEntry.getOrder()){
 			order.setid(orderid);
 			order.setStyleid(style.getid());
 			homepagestyleorderEntries.add(order);
 			orderid = orderid+1;
 		}
-		for(THomePageImg img : styleEntry.getImg()){
-			img.setid(imgid);
-			img.setStyleid(style.getid());
-			img.setUpdatetime(now);
-			homepageimgEntries.add(img);
-			imgid = imgid+1;
-		}
-		styleEntry.setImg(homepageimgEntries);
 		styleEntry.setOrder(homepagestyleorderEntries);
 		homepageStyleDao.save(styleEntry);
 		return;
@@ -574,10 +345,10 @@ public class HomePageManager {
 		}
 	}
 
-	public void editHomePageStyle(long styleid,String type) {
+	public void editHomePageStyle(long styleid,String type){
 		THomePageStyle styleEntry =  homepageStyleDao.findOne(styleid);
 		if(styleEntry==null){
-			return;
+			throw new NoAuthenticationException(110,""+styleid);
 		}
 
 		if(type.equals("del")){
@@ -600,7 +371,7 @@ public class HomePageManager {
 
 		//1.group by priority get priority list; 2.get list by priority order by updatetime; 3.add all list
 		List<Long> priorityList = homepageInfoDao.findpriority();
-		if(priorityList.size()==0||priorityList==null){
+		if(CollectionUtils.isEmpty(priorityList)){
 			return null;
 		}
 
@@ -613,7 +384,7 @@ public class HomePageManager {
 		}
 
 
-		if(homepageEntry==null||homepageEntry.size()==0){
+		if(CollectionUtils.isEmpty(homepageEntry)){
 			return null;
 		}
 
@@ -635,7 +406,7 @@ public class HomePageManager {
 
 		//1.group by priority get priority list; 2.get list by priority order by updatetime; 3.add all list
 		List<Long> priorityList = homepageInfoDao.findpriority();
-		if(priorityList.size()==0||priorityList==null){
+		if(priorityList==null||priorityList.size()==0){
 			return null;
 		}
 

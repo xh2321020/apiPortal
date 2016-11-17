@@ -1,14 +1,12 @@
 package com.cnnp.social.homepage.manager.dto;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.cnnp.social.homepage.repository.entity.THomePageStyleOrder;
 
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import com.cnnp.social.homepage.repository.entity.THomePageImg;
-import com.cnnp.social.homepage.repository.entity.THomePageStyleOrder;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 public class HomePageStyleDto {
@@ -21,7 +19,6 @@ public class HomePageStyleDto {
 	private String createusername;//创建用户名	
 	@Temporal(TemporalType.DATE)
 	private Date updatetime;//创建时间	
-	private List<THomePageImg> img = new ArrayList<THomePageImg>();
 	private List<THomePageStyleOrder> order = new ArrayList<THomePageStyleOrder>();
 	
 	public Long getid() {
@@ -86,13 +83,6 @@ public class HomePageStyleDto {
 		this.updatetime = updatetime;
 	}
 	
-	public List<THomePageImg> getImg() {
-		return img;
-	}
-
-	public void setImg(List<THomePageImg> img) {
-		this.img = img;
-	}
 	public List<THomePageStyleOrder> getOrder() {
 		return order;
 	}

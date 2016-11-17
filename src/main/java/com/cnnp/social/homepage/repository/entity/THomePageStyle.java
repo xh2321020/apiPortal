@@ -25,10 +25,8 @@ public class THomePageStyle{
 	private String createusername;//创建用户名	
 	@Temporal(TemporalType.DATE)
 	private Date updatetime;//创建时间	
-	@OneToMany(cascade = { CascadeType.ALL })
-	@JoinColumn(name = "styleid")
-	private List<THomePageImg> img = new ArrayList<THomePageImg>();
-	@OneToMany(cascade = { CascadeType.ALL })
+
+	@OneToMany(cascade = { CascadeType.ALL },fetch =FetchType.EAGER)
 	@JoinColumn(name = "styleid")
 	private List<THomePageStyleOrder> order = new ArrayList<THomePageStyleOrder>();
 	
@@ -96,14 +94,7 @@ public class THomePageStyle{
 	public void setUpdatetime(Date updatetime) {
 		this.updatetime = updatetime;
 	}
-	public List<THomePageImg> getImg() {
-		return this.img;
-	}
 
-	public void setImg(List<THomePageImg> img) {
-		this.img = img;
-	}
-	
 	public List<THomePageStyleOrder> getOrder() {
 		return this.order;
 	}

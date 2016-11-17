@@ -1,13 +1,8 @@
 package com.cnnp.social.homepage.manager.dto;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import com.cnnp.social.homepage.repository.entity.THomePageAdmin;
+import java.util.Date;
 
 public class HomePageInfoDto {
 	private long id; //ID
@@ -22,7 +17,6 @@ public class HomePageInfoDto {
 	private String createusername;//创建用户名	
 	@Temporal(TemporalType.DATE)
 	private Date updatetime;//创建时间	
-	private List<THomePageAdmin> admin = new ArrayList<THomePageAdmin>();
 	private long parentid; //ID
 	private long priority;// 排序优先级
 	
@@ -112,13 +106,6 @@ public class HomePageInfoDto {
 
 	public void setUpdatetime(Date updatetime) {
 		this.updatetime = updatetime;
-	}
-	public List<THomePageAdmin> getAdmin() {
-		return admin;
-	}
-
-	public void setAdmin(List<THomePageAdmin> admin) {
-		this.admin = admin;
 	}
 	public long getParentid() {
 		return parentid;

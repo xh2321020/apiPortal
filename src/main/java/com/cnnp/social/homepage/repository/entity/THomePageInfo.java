@@ -1,11 +1,7 @@
 package com.cnnp.social.homepage.repository.entity;
 
 import javax.persistence.*;
-
-
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * The persistent class for the HP_HOMEPAGEINFO database table.
@@ -30,11 +26,7 @@ public class THomePageInfo{
 	private long parentid; //ID
 	
 	private long priority;//优先级
-	
-	@OneToMany(cascade = { CascadeType.ALL })
-	@JoinColumn(name = "hpid")
-	private List<THomePageAdmin> admin = new ArrayList<THomePageAdmin>();
-	
+
 	public THomePageInfo() {
 	}
 
@@ -124,13 +116,7 @@ public class THomePageInfo{
 	public void setUpdatetime(Date updatetime) {
 		this.updatetime = updatetime;
 	}
-	public List<THomePageAdmin> getAdmin() {
-		return this.admin;
-	}
 
-	public void setAdmin(List<THomePageAdmin> admin) {
-		this.admin = admin;
-	}
 	public long getParentid() {
 		return this.parentid;
 	}

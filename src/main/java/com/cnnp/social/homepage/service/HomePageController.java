@@ -27,9 +27,15 @@ public class HomePageController {
 	public void edittype(@RequestParam long hpid,@RequestParam String type) {
 		hpManger.editHomePage(hpid,type);
 	}
+
+	/**
+	 * 加载所有生效的信息门户
+	 * @param userid
+	 * @return
+	 */
 	@RequestMapping(value = "/homepage/{userid}", method = RequestMethod.GET)
 	public @ResponseBody List<HomePageInfoDto> view(@PathVariable("userid") String userid) {
-		return hpManger.findHomePage(userid);
+		return hpManger.findActivePortals();
 	}
 
 	@RequestMapping(value = "/homepagecolumn", method = RequestMethod.GET)
@@ -86,10 +92,7 @@ public class HomePageController {
 	public void enableStyle(@PathVariable("styleid") long styleid) {
 		hpManger.enableStyle(styleid);
 	}
-	//@RequestMapping(value = "/test", method = RequestMethod.GET)
-	//public @ResponseBody List<HomePageFormDto> viewtest(@RequestParam long hpid) {
-	//	return hpManger.findFrom(hpid);
-	//}
+
 	@RequestMapping(value = "/{hpid}", method = RequestMethod.GET)
 	public @ResponseBody List<HomePageInfoAllDto> viewHpall(@PathVariable("hpid") long hpid) {
 		return hpManger.findHomePageAll(hpid);
