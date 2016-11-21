@@ -9,6 +9,7 @@ import com.cnnp.social.homepage.manager.PermissionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -23,12 +24,12 @@ public class PermissionManagerController {
     private PermissionManager permissionManager;
 
     @RequestMapping(value = "/permission/editable", method = RequestMethod.GET)
-    public boolean checkPortalEditablePermission(String sn, String site){
+    public boolean checkPortalEditablePermission(@RequestParam String sn, @RequestParam String site){
         return permissionManager.isSitePortalAdmin(sn,site);
     }
 
     @RequestMapping(value = "/permission/activable", method = RequestMethod.GET)
-    public boolean checkPortalEditablePermission(String sn){
+    public boolean checkPortalEditablePermission(@RequestParam String sn){
         return permissionManager.isPortalAdmin(sn);
     }
 }
