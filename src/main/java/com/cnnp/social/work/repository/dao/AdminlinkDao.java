@@ -15,6 +15,6 @@ import com.cnnp.social.work.repository.entity.TAdminLink;
 public interface AdminlinkDao extends CrudRepository<TAdminLink, Long> ,JpaSpecificationExecutor<TAdminLink>{
 	@Query("select admin from TAdminLink admin where admin.id = ?1")
 	public TAdminLink findOne(Long id);
-	@Query("select admin from TAdminLink admin")
+	@Query("select admin from TAdminLink admin order by admin.shortname")
 	public List<TAdminLink> find();
 }

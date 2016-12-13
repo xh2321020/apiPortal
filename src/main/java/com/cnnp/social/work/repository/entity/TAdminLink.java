@@ -1,9 +1,8 @@
 package com.cnnp.social.work.repository.entity;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * The persistent class for the W_ADMIN_LINK database table.
@@ -21,18 +20,13 @@ public class TAdminLink{
 	private String icoa;//日程类型
 
 	private String description;//备注
+	private String shortname;//简称
 
 	
 	public TAdminLink() {
 	}
 
-	public long getid() {
-		return this.id;
-	}
 
-	public void setid(long id) {
-		this.id = id;
-	}
 
 	public String getLink() {
 		return this.link;
@@ -58,4 +52,19 @@ public class TAdminLink{
 		this.description = description;
 	}
 
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getShortname() {
+		return shortname;
+	}
+
+	public void setShortname(String shortname) {
+		this.shortname = shortname;
+	}
 }
